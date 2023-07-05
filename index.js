@@ -1351,6 +1351,10 @@ async function getTokenAddress(tokenName) {
 	if (tokenName === 'EXFI') {
 		return '0xC348F894d0E939FE72c467156E6d7DcbD6f16e21';
 	}
+	if (tokenName === 'PHX') {
+		return 'if (tokenName === 'EXFI') {
+		return '0xC348F894d0E939FE72c467156E6d7DcbD6f16e21';
+	}
 	// You can add more tokens here
 	// else if (tokenName === 'Another Token') {
 	//     return '0x...';
@@ -1375,7 +1379,7 @@ function showNotification(message, isSuccess) {
 
 async function populateEligibleTokensDropdown() {
 	try {
-		const eligibleTokens = ['Test Token', 'Canary', 'Oracle', 'WSGB', 'AstralCredits', 'SPARKS', 'SFORT', 'PSB', 'CEN', 'CARE', 'BEAST', 'EXFI']; // Add the names of the eligible tokens here
+		const eligibleTokens = ['Test Token', 'Canary', 'Oracle', 'WSGB', 'AstralCredits', 'SPARKS', 'SFORT', 'PSB', 'CEN', 'CARE', 'BEAST', 'EXFI', 'PHX']; // Add the names of the eligible tokens here
 		const dropdown = document.getElementById('eligibleTokensDropdown');
 		
 		dropdown.innerHTML = '';
