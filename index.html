@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BlueBirdX Dapp</title>
+<link rel="stylesheet" type="text/css" href="styles.css">
+</head>
+
+<body>
+<div class="header">
+<h1>BlueBirdX</h1>
+<button id="connectButton" class="btn">Connect Wallet</button>
+</div>
+<div class="container">
+<div class="account-info">
+<h2>Account</h2>
+<div class="account-content">
+<div class="account-address">
+<p id="account"></p>
+<p id="transactionStatus"></p>
+</div>
+<div class="account-actions">
+<div class="action">
+<button id="claimRewardButton" class="btn">Claim Reward</button>
+</div>
+<div class="action">
+<div id="spinner" class="spinner"></div>
+<img id="success-icon" src="images/success_icon.png" class="status-icon" alt="Success" style="display: none;">
+<img id="failure-icon" src="images/failure_icon.png" class="status-icon" alt="Failure" style="display: none;">
+</div>
+</div>
+</div>
+<p id="tokensMined"></p>
+<p id="rewardsClaimed"></p>
+</div>
+<div class="actions">
+<div class="action">
+<h3>Approve Token</h3>
+<select id="eligibleTokensDropdown"></select>
+<button id="retrieveTokenAddressButton" class="btn">Retrieve Token Address</button>
+<input type="text" id="approveTokenAddress" placeholder="Token Address">
+<div>
+<label for="approveAmount">Amount to Approve:</label>
+<input type="text" id="approveAmount" placeholder="Enter amount">
+</div>
+<button id="approveButton" class="btn">Approve</button>
+<div class="message"></div>
+</div>
+<div class="action">
+<h3>Transact Tokens</h3>
+<input type="text" id="tokenAddress" placeholder="Token Address">
+<input type="text" id="recipient" placeholder="Recipient Address">
+<input type="number" id="tokenAmount" placeholder="Amount">
+<button id="transactButton" class="btn">Transact</button>
+<div class="message"></div>
+</div>
+</div>
+<div id="notification" class="notification">
+<div id="accountMessage" class="message"></div>
+<div id="approveMessage" class="message"></div>
+<div id="transactMessage" class="message"></div>
+<div id="rewardMessage" class="message"></div>
+</div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+<script src="index.js"></script>
+</body>
+
+</html>
