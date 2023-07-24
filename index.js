@@ -1,7 +1,7 @@
 const web3 = new Web3(window.ethereum);
 let account = null;
 let blueBirdContract = null;
-const blueBirdContractAddress = '0xc16ab857f1c2A374BD8897F055F2c2683D4d06f3'; // Replace with contract address
+const blueBirdContractAddress = '0xC333b78030C68722d6d7B85a0e22F969fF999641'; // Replace with contract address
 const blueBirdContractABI = [
 {
 	"anonymous": false,
@@ -26,6 +26,50 @@ const blueBirdContractABI = [
 	}
 	],
 	"name": "Approval",
+	"type": "event"
+},
+{
+	"anonymous": false,
+	"inputs": [
+	{
+		"indexed": true,
+		"internalType": "address",
+		"name": "sender",
+		"type": "address"
+	},
+	{
+		"indexed": true,
+		"internalType": "address",
+		"name": "recipient",
+		"type": "address"
+	},
+	{
+		"indexed": false,
+		"internalType": "uint256",
+		"name": "amount",
+		"type": "uint256"
+	}
+	],
+	"name": "FeeTransferred",
+	"type": "event"
+},
+{
+	"anonymous": false,
+	"inputs": [
+	{
+		"indexed": false,
+		"internalType": "uint256",
+		"name": "totalMinedSupply",
+		"type": "uint256"
+	},
+	{
+		"indexed": false,
+		"internalType": "uint256",
+		"name": "milestoneTarget",
+		"type": "uint256"
+	}
+	],
+	"name": "MilestoneReached",
 	"type": "event"
 },
 {
@@ -77,25 +121,6 @@ const blueBirdContractABI = [
 	}
 	],
 	"name": "RewardClaimed",
-	"type": "event"
-},
-{
-	"anonymous": false,
-	"inputs": [
-	{
-		"indexed": true,
-		"internalType": "address",
-		"name": "teamAdvisor",
-		"type": "address"
-	},
-	{
-		"indexed": false,
-		"internalType": "uint256",
-		"name": "amount",
-		"type": "uint256"
-	}
-	],
-	"name": "TeamAdvisorDistributionClaimed",
 	"type": "event"
 },
 {
@@ -201,11 +226,24 @@ const blueBirdContractABI = [
 	},
 	{
 		"internalType": "uint256",
-		"name": "newMiningRate",
+		"name": "tokenMiningRate",
 		"type": "uint256"
 	}
 	],
 	"name": "addEligibleToken",
+	"outputs": [],
+	"stateMutability": "nonpayable",
+	"type": "function"
+},
+{
+	"inputs": [
+	{
+		"internalType": "address",
+		"name": "_address",
+		"type": "address"
+	}
+	],
+	"name": "addToBlacklist",
 	"outputs": [],
 	"stateMutability": "nonpayable",
 	"type": "function"
@@ -235,28 +273,8 @@ const blueBirdContractABI = [
 	"type": "function"
 },
 {
-	"inputs": [
-	{
-		"internalType": "address",
-		"name": "account",
-		"type": "address"
-	}
-	],
-	"name": "blacklistAddress",
-	"outputs": [],
-	"stateMutability": "nonpayable",
-	"type": "function"
-},
-{
 	"inputs": [],
 	"name": "claimReward",
-	"outputs": [],
-	"stateMutability": "nonpayable",
-	"type": "function"
-},
-{
-	"inputs": [],
-	"name": "claimTeamAdvisorDistribution",
 	"outputs": [],
 	"stateMutability": "nonpayable",
 	"type": "function"
@@ -320,33 +338,7 @@ const blueBirdContractABI = [
 		"type": "address"
 	}
 	],
-	"name": "excludeFromTransferFee",
-	"outputs": [],
-	"stateMutability": "nonpayable",
-	"type": "function"
-},
-{
-	"inputs": [
-	{
-		"internalType": "address",
-		"name": "account",
-		"type": "address"
-	}
-	],
 	"name": "includeInMaxBalance",
-	"outputs": [],
-	"stateMutability": "nonpayable",
-	"type": "function"
-},
-{
-	"inputs": [
-	{
-		"internalType": "address",
-		"name": "account",
-		"type": "address"
-	}
-	],
-	"name": "includeInTransferFee",
 	"outputs": [],
 	"stateMutability": "nonpayable",
 	"type": "function"
@@ -379,11 +371,11 @@ const blueBirdContractABI = [
 	"inputs": [
 	{
 		"internalType": "address",
-		"name": "account",
+		"name": "tokenAddress",
 		"type": "address"
 	}
 	],
-	"name": "removeAddressFromBlacklist",
+	"name": "removeEligibleToken",
 	"outputs": [],
 	"stateMutability": "nonpayable",
 	"type": "function"
@@ -392,11 +384,11 @@ const blueBirdContractABI = [
 	"inputs": [
 	{
 		"internalType": "address",
-		"name": "tokenAddress",
+		"name": "_address",
 		"type": "address"
 	}
 	],
-	"name": "removeEligibleToken",
+	"name": "removeFromBlacklist",
 	"outputs": [],
 	"stateMutability": "nonpayable",
 	"type": "function"
@@ -451,11 +443,11 @@ const blueBirdContractABI = [
 	"inputs": [
 	{
 		"internalType": "uint256",
-		"name": "newMiningRate",
+		"name": "newPeriod",
 		"type": "uint256"
 	}
 	],
-	"name": "setMiningRate",
+	"name": "setRewardClaimPeriod",
 	"outputs": [],
 	"stateMutability": "nonpayable",
 	"type": "function"
@@ -464,11 +456,11 @@ const blueBirdContractABI = [
 	"inputs": [
 	{
 		"internalType": "uint256",
-		"name": "newTeamAdvisorsRate",
+		"name": "newTeamAdvisorsFeeRate",
 		"type": "uint256"
 	}
 	],
-	"name": "setTeamAdvisorsRate",
+	"name": "setTeamAdvisorsFeeRate",
 	"outputs": [],
 	"stateMutability": "nonpayable",
 	"type": "function"
@@ -685,19 +677,6 @@ const blueBirdContractABI = [
 },
 {
 	"inputs": [],
-	"name": "deploymentTime",
-	"outputs": [
-	{
-		"internalType": "uint256",
-		"name": "",
-		"type": "uint256"
-	}
-	],
-	"stateMutability": "view",
-	"type": "function"
-},
-{
-	"inputs": [],
 	"name": "developmentFund",
 	"outputs": [
 	{
@@ -774,19 +753,6 @@ const blueBirdContractABI = [
 	"type": "function"
 },
 {
-	"inputs": [],
-	"name": "INITIAL_LOCK_PERIOD",
-	"outputs": [
-	{
-		"internalType": "uint256",
-		"name": "",
-		"type": "uint256"
-	}
-	],
-	"stateMutability": "view",
-	"type": "function"
-},
-{
 	"inputs": [
 	{
 		"internalType": "address",
@@ -795,25 +761,6 @@ const blueBirdContractABI = [
 	}
 	],
 	"name": "isExcludedFromMaxBalance",
-	"outputs": [
-	{
-		"internalType": "bool",
-		"name": "",
-		"type": "bool"
-	}
-	],
-	"stateMutability": "view",
-	"type": "function"
-},
-{
-	"inputs": [
-	{
-		"internalType": "address",
-		"name": "",
-		"type": "address"
-	}
-	],
-	"name": "isExcludedFromTransferFee",
 	"outputs": [
 	{
 		"internalType": "bool",
@@ -878,19 +825,6 @@ const blueBirdContractABI = [
 },
 {
 	"inputs": [],
-	"name": "miningRate",
-	"outputs": [
-	{
-		"internalType": "uint256",
-		"name": "",
-		"type": "uint256"
-	}
-	],
-	"stateMutability": "view",
-	"type": "function"
-},
-{
-	"inputs": [],
 	"name": "name",
 	"outputs": [
 	{
@@ -930,19 +864,6 @@ const blueBirdContractABI = [
 },
 {
 	"inputs": [],
-	"name": "QUARTER",
-	"outputs": [
-	{
-		"internalType": "uint256",
-		"name": "",
-		"type": "uint256"
-	}
-	],
-	"stateMutability": "view",
-	"type": "function"
-},
-{
-	"inputs": [],
 	"name": "remainingSupply",
 	"outputs": [
 	{
@@ -956,7 +877,7 @@ const blueBirdContractABI = [
 },
 {
 	"inputs": [],
-	"name": "SUPPLY_REDUCTION_PERCENTAGE",
+	"name": "rewardClaimPeriod",
 	"outputs": [
 	{
 		"internalType": "uint256",
@@ -1017,6 +938,19 @@ const blueBirdContractABI = [
 		"internalType": "address",
 		"name": "",
 		"type": "address"
+	}
+	],
+	"stateMutability": "view",
+	"type": "function"
+},
+{
+	"inputs": [],
+	"name": "teamAdvisorsFeeRate",
+	"outputs": [
+	{
+		"internalType": "uint256",
+		"name": "",
+		"type": "uint256"
 	}
 	],
 	"stateMutability": "view",
@@ -1106,7 +1040,7 @@ const blueBirdContractABI = [
 	"stateMutability": "view",
 	"type": "function"
 }
-]; // Replace with contract ABI
+];
 
 const approveFunctionABI = [
 {
@@ -1133,6 +1067,7 @@ const approveFunctionABI = [
 	"type": "function"
 }
 ];
+
 
 document.getElementById('connectButton').addEventListener('click', connect);
 document.getElementById('retrieveTokenAddressButton').addEventListener('click', retrieveTokenAddress);
@@ -1316,7 +1251,7 @@ function truncateAddress(address) {
 async function getTokenAddress(tokenName) {
 	// Replace the addresses below with the actual addresses of your tokens
 	if (tokenName === 'Test Token') {
-		return '0xDEcc96aB96740885ef4AdE647e4A748be939AA75';
+		return '0x339F5b0B8eC561b56Cc29f06C6f411b1567154Ab';
 	}
 	if (tokenName === 'Canary') {
 		return '0xB2cD91b79df296ea181AA5f6d729E5136e1853A4';
@@ -1352,7 +1287,6 @@ async function getTokenAddress(tokenName) {
 		return '0xC348F894d0E939FE72c467156E6d7DcbD6f16e21';
 	}
 	if (tokenName === 'PHX') {
-		return 'if (tokenName === 'EXFI') {
 		return '0xC348F894d0E939FE72c467156E6d7DcbD6f16e21';
 	}
 	// You can add more tokens here
