@@ -192,19 +192,18 @@ function transactTokens(address tokenAddress, uint256 amount, address recipient)
         );
     }
 
+    // Check if the total mined supply has reached the next milestone
+    if (totalMinedSupply + rewardAmount > milestones[currentMilestoneIndex]) {
+        // Reduce the mining rate by 10%
+        currentMiningRate = (currentMiningRate * 90) / 100;
+
+        // Update the current milestone index
+        currentMilestoneIndex++;
+    }
+
     // Update the total mined supply and the remaining supply
     totalMinedSupply += rewardAmount;
     remainingSupply -= rewardAmount;
-
-    // Check if the total mined supply has reached the next milestone
-    if (totalMinedSupply > milestones[currentMilestoneIndex]) {
-    // Reduce the mining rate by 10%
-    currentMiningRate = (currentMiningRate * 90) / 100;
-
-    // Update the current milestone index
-    currentMilestoneIndex++;
-
-    }
 
     // Mint the reward tokens for the sender
     _mint(msg.sender, rewardAmount * 80 / 100);
@@ -216,6 +215,7 @@ function transactTokens(address tokenAddress, uint256 amount, address recipient)
     emit RewardClaimed(msg.sender, rewardAmount);
     emit TokenTransacted(msg.sender, recipient, amount - totalFee, rewardAmount);
 }
+
 
 
 function setRewardClaimPeriod(uint256 newPeriod) external onlyOwner {
