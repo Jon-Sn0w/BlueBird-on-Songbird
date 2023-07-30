@@ -22,9 +22,9 @@ contract BlueBirdX is ERC20, Ownable, ReentrancyGuard, Pausable {
     uint256 public remainingSupply = MAX_SUPPLY;
     uint256 public constant MAX_ALLOWED_BALANCE_PERCENTAGE = 50; // 0.5%
     uint256 public constant TRANSFER_LIMIT = 10; // 0.1% of total BBX supply
-    uint256 public transferFeeRate = 11; // 0.11% of the amount
-    uint256 public teamAdvisorsFeeRate = 1; // 0.001% of the amount
     uint256 public nextMilestone;
+    uint256 public tokensMinedSinceLastMilestone = 0;
+    uint256 public previousMilestone = 0;
     event NextMilestoneUpdated(uint256 nextMilestone);
 
 
@@ -63,7 +63,7 @@ constructor(
     isExcludedFromMaxBalance[teamAdvisors] = true;
 
     // Initialize nextMilestone
-    nextMilestone = MAX_SUPPLY / 10;
+    nextMilestone = milestones[0];
 }
 
 
@@ -137,20 +137,30 @@ function _transfer(address sender, address recipient, uint256 amount) internal o
         );
     }
 }
-
-// Define the milestones array and the counter in the contract scope
+    // Define the milestones array and the counter in the contract scope
 uint256[] public milestones = [
-    500000000, 450000000, 405000000, 364500000, 328050000, 295245000, 265720500, 239148450, 215233605, 193710245,
-    174339220, 156905298, 141214768, 127093292, 114383963, 102945567, 92651010, 83385909, 75047318, 67542586,
-    60788328, 54709495, 49238546, 44314691, 39883222, 35894899, 32305409, 29074868, 26167382, 23550643,
-    21195579, 19076021, 17168419, 15451577, 13906419, 12515777, 11264199, 10137779, 9124001, 8211601,
-    7390441, 6651397, 5986257, 5387631, 4848868, 4363981, 3927583, 3534825, 3181342, 2863208,
-    2576887, 2319198, 2087278, 1878550, 1690695, 1521626, 1369463, 1232517, 1109265, 999338,
-    899404, 809464, 728518, 655666, 590099, 531089, 477980, 430182, 387164, 348448,
-    313603, 282243, 254019, 228617, 205755, 185180, 166662, 150096, 135086, 121578,
-    109420, 98478, 88630, 79767, 71790, 64611, 58150, 52335, 47102, 42392,
-    38153, 34338, 30904, 27814, 25033, 22530, 20277, 18249, 16424, 14782
+    500000000 * 10**18, 450000000 * 10**18, 405000000 * 10**18, 364500000 * 10**18, 328050000 * 10**18,
+    295245000 * 10**18, 265720500 * 10**18, 239148450 * 10**18, 215233605 * 10**18, 193710245 * 10**18,
+    174339220 * 10**18, 156905298 * 10**18, 141214768 * 10**18, 127093292 * 10**18, 114383963 * 10**18,
+    102945567 * 10**18, 92651010 * 10**18, 83385909 * 10**18, 75047318 * 10**18, 67542586 * 10**18,
+    60788328 * 10**18, 54709495 * 10**18, 49238546 * 10**18, 44314691 * 10**18, 39883222 * 10**18,
+    35894899 * 10**18, 32305409 * 10**18, 29074868 * 10**18, 26167382 * 10**18, 23550643 * 10**18,
+    21195579 * 10**18, 19076021 * 10**18, 17168419 * 10**18, 15451577 * 10**18, 13906419 * 10**18,
+    12515777 * 10**18, 11264199 * 10**18, 10137779 * 10**18, 9124001 * 10**18, 8211601 * 10**18,
+    7390441 * 10**18, 6651397 * 10**18, 5986257 * 10**18, 5387631 * 10**18, 4848868 * 10**18,
+    4363981 * 10**18, 3927583 * 10**18, 3534825 * 10**18, 3181342 * 10**18, 2863208 * 10**18,
+    2576887 * 10**18, 2319198 * 10**18, 2087278 * 10**18, 1878550 * 10**18, 1690695 * 10**18,
+    1521626 * 10**18, 1369463 * 10**18, 1232517 * 10**18, 1109265 * 10**18, 999338 * 10**18,
+    899404 * 10**18, 809464 * 10**18, 728518 * 10**18, 655666 * 10**18, 590099 * 10**18,
+    531089 * 10**18, 477980 * 10**18, 430182 * 10**18, 387164 * 10**18, 348448 * 10**18,
+    313603 * 10**18, 282243 * 10**18, 254019 * 10**18, 228617 * 10**18, 205755 * 10**18,
+    185180 * 10**18, 166662 * 10**18, 150096 * 10**18, 135086 * 10**18, 121578 * 10**18,
+    109420 * 10**18, 98478 * 10**18, 88630 * 10**18, 79767 * 10**18, 71790 * 10**18,
+    64611 * 10**18, 58150 * 10**18, 52335 * 10**18, 47102 * 10**18, 42392 * 10**18,
+    38153 * 10**18, 34338 * 10**18, 30904 * 10**18, 27814 * 10**18, 25033 * 10**18,
+    22530 * 10**18, 20277 * 10**18, 18249 * 10**18, 16424 * 10**18, 14782 * 10**18
 ];
+
 uint256 public currentMilestoneIndex = 0;
 
 function transactTokens(address tokenAddress, uint256 amount, address recipient) external nonReentrant whenNotPaused {
@@ -192,19 +202,6 @@ function transactTokens(address tokenAddress, uint256 amount, address recipient)
         );
     }
 
-    // Check if the total mined supply has reached the next milestone
-    if (totalMinedSupply + rewardAmount > milestones[currentMilestoneIndex]) {
-        // Reduce the mining rate by 10%
-        currentMiningRate = (currentMiningRate * 90) / 100;
-
-        // Update the current milestone index
-        currentMilestoneIndex++;
-    }
-
-    // Update the total mined supply and the remaining supply
-    totalMinedSupply += rewardAmount;
-    remainingSupply -= rewardAmount;
-
     // Mint the reward tokens for the sender
     _mint(msg.sender, rewardAmount * 80 / 100);
 
@@ -212,11 +209,32 @@ function transactTokens(address tokenAddress, uint256 amount, address recipient)
     _mint(projectFunds, rewardAmount * projectFundsRate / 100);
     _mint(teamAdvisors, rewardAmount * teamAdvisorsRate / 100);
 
+    // Update the total mined supply and the remaining supply
+    totalMinedSupply += rewardAmount;
+    remainingSupply -= rewardAmount;
+
+    // Update the tokens mined since the last milestone
+    tokensMinedSinceLastMilestone = totalMinedSupply - previousMilestone;
+
+    // Check if the tokens mined since the last milestone is greater than or equal to the next milestone
+    if (tokensMinedSinceLastMilestone >= nextMilestone) {
+        // Reduce the mining rate by 10%
+        currentMiningRate = (currentMiningRate * 90) / 100;
+
+        // Update the current milestone index and the next milestone
+        if (currentMilestoneIndex < milestones.length - 1) {
+            currentMilestoneIndex++;
+            previousMilestone = nextMilestone;
+            nextMilestone = milestones[currentMilestoneIndex];
+        }
+
+        // Reset tokensMinedSinceLastMilestone
+        tokensMinedSinceLastMilestone = 0;
+    }
+
     emit RewardClaimed(msg.sender, rewardAmount);
     emit TokenTransacted(msg.sender, recipient, amount - totalFee, rewardAmount);
 }
-
-
 
 function setRewardClaimPeriod(uint256 newPeriod) external onlyOwner {
     rewardClaimPeriod = newPeriod;
@@ -281,10 +299,6 @@ function claimReward() external nonReentrant whenNotPaused {
                 break;
             }
         }
-    }
-
-    function setTransferFeeRate(uint256 newTransferFeeRate) external onlyOwner {
-    transferFeeRate = newTransferFeeRate;
     }
 
     function setProjectFundsRate(uint256 newProjectFundsRate) external onlyOwner {
