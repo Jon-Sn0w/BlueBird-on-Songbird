@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WrappedBBX DApp</title>
+<link rel="stylesheet" href="styles.css">
+<script src="https://cdn.jsdelivr.net/gh/ethereum/web3.js@1.3.5/dist/web3.min.js"></script>
+<script src="wrappedbbx.js" defer></script>
+<style>
+.verified {
+	color: green;
+}
+
+.not-verified {
+	color: red;
+}
+
+.status-icon, .spinner {
+	display: none; /* Initially hide all icons and spinners */
+}
+</style>
+
+</head>
+
+<body>
+<div class="container">
+<h1>WrappedBBX DApp</h1>
+<button id="connectWallet">Connect Wallet</button>
+
+<!-- NFT Verification Section -->
+<div>
+<h2>NFT Verification</h2>
+<button onclick="checkNFTAccess()">Verify NFT Access</button>
+<p id="nftStatus">NFT status: <span id="nftVerificationResult" class="not-verified">Not Verified</span></p>
+</div>
+
+<!-- Display WrappedBBX Balance -->
+<div>
+<label for="address">Address:</label>
+<input type="text" id="address" placeholder="Enter your wallet address">
+<button onclick="displayBalance()">Check Balance</button>
+<p id="balanceDisplay">Your WrappedBBX Balance: <span id="balance">0</span></p>
+</div>
+
+<!-- Deposit BBX to get WrappedBBX -->
+<div>
+<h2>Deposit BBX</h2>
+<label for="depositAmount">Amount:</label>
+<input type="number" id="depositAmount" placeholder="Enter amount to deposit">
+<button onclick="deposit()">Deposit</button>
+<div id="depositSpinner" class="spinner"></div>
+<img id="depositSuccessIcon" src="images/success_icon.png" class="status-icon" alt="Success" style="display: none;">
+<img id="depositFailureIcon" src="images/failure_icon.png" class="status-icon" alt="Failure" style="display: none;">
+</div>
+
+<!-- Unwrap WrappedBBX to get BBX -->
+<div>
+<h2>Unwrap WrappedBBX</h2>
+<label for="unwrapAmount">Amount:</label>
+<input type="number" id="unwrapAmount" placeholder="Enter amount to unwrap">
+<button onclick="unwrap()">Unwrap</button>
+<div id="unwrapSpinner" class="spinner"></div>
+<img id="unwrapSuccessIcon" src="images/success_icon.png" class="status-icon" alt="Success" style="display: none;">
+<img id="unwrapFailureIcon" src="images/failure_icon.png" class="status-icon" alt="Failure" style="display: none;">
+</div>
+
+<!-- Transfer WrappedBBX -->
+<div>
+<h2>Transfer WrappedBBX</h2>
+<label for="recipient">Recipient Address:</label>
+<input type="text" id="recipient" placeholder="Enter recipient's wallet address">
+<label for="transferAmount">Amount:</label>
+<input type="number" id="transferAmount" placeholder="Enter amount to transfer">
+<button onclick="transfer()">Transfer</button>
+<div id="transferSpinner" class="spinner"></div>
+<img id="transferSuccessIcon" src="images/success_icon.png" class="status-icon" alt="Success" style="display: none;">
+<img id="transferFailureIcon" src="images/failure_icon.png" class="status-icon" alt="Failure" style="display: none;">
+</div>
+
+<script>
+let accounts;
+
+async function verifyNFTAccess() {
+	const userAddress = document.getElementById('address').value;
+	
+	if (!userAddress || userAddress === "0x0000000000000000000000000000000000000000") {
+		alert("Please connect a valid wallet.");
+		return false; // Return false if no valid wallet is connected
+	}
+	
+	try {
+		const hasNFT1 = await wrappedbbxContract.methods.holdsNFTFromList(nftContracts1).call({ from: userAddress });
+		alert(`nftContract1: ${hasNFT1 ? "True" : "False"}`); // Alert for nftContract1
+		
+		const hasNFT2 = await wrappedbbxContract.methods.holdsNFTFromList(nftContracts2).call({ from: userAddress });
+		alert(`nftContract2: ${hasNFT2 ? "True" : "False"}`); // Alert for nftContract2
+		
+		let combinedValue = 0;
+		for (let contract of nftContracts3) {
+			const value = await wrappedbbxContract.methods.tokenIdToValue(contract).call({ from: userAddress });
+			combinedValue += parseInt(value);
+		}
+		
+		alert(`nftContract3 combined value: ${combinedValue >= 2000 ? "True" : "False"}`); // Alert for nftContract3 combined value
+		
+		const hasAccess = hasNFT1 && hasNFT2 && combinedValue >= 2000;
+		
+		return hasAccess; // Return the boolean value indicating access
+		
+	} catch (error) {
+		console.error("Error verifying NFT access:", error);
+		alert("An error occurred while verifying NFT access. Please try again.");
+		return false; // Return false in case of an error
+	}
+}
+
+async function checkNFTAccess() {
+	console.log("checkNFTAccess function started"); // Log 1
+	
+	try {
+		const hasAccess = await verifyNFTAccess();
+		console.log("Has Access:", hasAccess); // Log 2
+		
+		const resultElement = document.getElementById('nftVerificationResult');
+		
+		if (!resultElement) {
+			console.error("Element with ID 'nftVerificationResult' not found.");
+			return;
+		}
+		
+		if (hasAccess) {
+			resultElement.innerText = "Verified";
+			resultElement.classList.remove("not-verified");
+			resultElement.classList.add("verified");
+		} else {
+			resultElement.innerText = "Not Verified";
+			resultElement.classList.remove("verified");
+			resultElement.classList.add("not-verified");
+		}
+	} catch (error) {
+		console.error("Error in checkNFTAccess:", error); // Log 3
+	}
+}
+
+
+async function displayBalance() {
+	const address = document.getElementById('address').value;
+	const balance = await getWrappedBBXBalance(address);
+	document.getElementById('balance').innerText = balance;
+}
+
+async function deposit() {
+	document.getElementById('depositSpinner').style.display = 'block'; // Show spinner
+	try {
+		const amount = document.getElementById('depositAmount').value;
+		await depositBBX(amount);
+		document.getElementById('depositSuccessIcon').style.display = 'block'; // Show success icon
+	} catch (error) {
+		document.getElementById('depositFailureIcon').style.display = 'block'; // Show failure icon
+	} finally {
+		document.getElementById('depositSpinner').style.display = 'none'; // Hide spinner
+	}
+}
+
+async function unwrap() {
+	document.getElementById('unwrapSpinner').style.display = 'block'; // Show spinner
+	try {
+		const amount = document.getElementById('unwrapAmount').value;
+		await unwrapWBBX(amount);
+		document.getElementById('unwrapSuccessIcon').style.display = 'block'; // Show success icon
+	} catch (error) {
+		document.getElementById('unwrapFailureIcon').style.display = 'block'; // Show failure icon
+	} finally {
+		document.getElementById('unwrapSpinner').style.display = 'none'; // Hide spinner
+	}
+}
+
+async function transfer() {
+	document.getElementById('transferSpinner').style.display = 'block'; // Show spinner
+	try {
+		const recipient = document.getElementById('recipient').value;
+		const amount = document.getElementById('transferAmount').value;
+		await sendWrappedBBX(recipient, amount);
+		document.getElementById('transferSuccessIcon').style.display = 'block'; // Show success icon
+	} catch (error) {
+		document.getElementById('transferFailureIcon').style.display = 'block'; // Show failure icon
+	} finally {
+		document.getElementById('transferSpinner').style.display = 'none'; // Hide spinner
+	}
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+	document.getElementById('connectWallet').addEventListener('click', async () => {
+		if (window.ethereum) {
+			web3 = new Web3(window.ethereum);
+			try {
+				// Request account access
+				accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+				document.getElementById('address').value = accounts[0]; // Auto-fill the address field
+				alert('Wallet connected!');
+			} catch (error) {
+				console.error("User denied account access...");
+			}
+		} else if (window.web3) {
+			web3 = new Web3(window.web3.currentProvider);
+			accounts = await web3.eth.getAccounts();
+		} else {
+			console.log('Non-Ethereum browser detected. Consider installing MetaMask!');
+		}
+	});
+});
+</script>
+</body>
+
+</html>

@@ -11,6 +11,10 @@
 <body>
 <div class="header">
 <h1>BlueBirdX</h1>
+<select id="navigationDropdown" class="navigation-dropdown">
+<option value="">--Navigate--</option>
+<option value="wrappedbbx.html">Wrapped BBX</option>
+</select>
 <button id="connectButton" class="btn">Connect Wallet</button>
 </div>
 <div class="container">
@@ -65,7 +69,16 @@
 </div>
 </div>
 <script src="https://cdn.jsdelivr.net/npm/web3@1.5.2/dist/web3.min.js"></script>
+<script>
+document.getElementById('navigationDropdown').addEventListener('change', function() {
+	if (this.value) {
+		window.location.href = this.value;
+	}
+});
+</script>
+
 <script src="index.js"></script>
+
 </body>
 
 </html>

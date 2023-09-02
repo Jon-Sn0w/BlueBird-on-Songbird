@@ -1,7 +1,7 @@
 const web3 = new Web3(window.ethereum);
 let account = null;
 let blueBirdContract = null;
-const blueBirdContractAddress = '0xC333b78030C68722d6d7B85a0e22F969fF999641'; // Replace with contract address
+const blueBirdContractAddress = '0x29D3dfb4bd040f04Bd0e01C28A4Cb9dE14b47E13'; // Replace with contract address
 const blueBirdContractABI = [
 {
 	"anonymous": false,
@@ -70,6 +70,19 @@ const blueBirdContractABI = [
 	}
 	],
 	"name": "MilestoneReached",
+	"type": "event"
+},
+{
+	"anonymous": false,
+	"inputs": [
+	{
+		"indexed": false,
+		"internalType": "uint256",
+		"name": "nextMilestone",
+		"type": "uint256"
+	}
+	],
+	"name": "NextMilestoneUpdated",
 	"type": "event"
 },
 {
@@ -404,37 +417,11 @@ const blueBirdContractABI = [
 	"inputs": [
 	{
 		"internalType": "uint256",
-		"name": "newDevelopmentFundFeeRate",
+		"name": "newProjectFundsRate",
 		"type": "uint256"
 	}
 	],
-	"name": "setDevelopmentFundFeeRate",
-	"outputs": [],
-	"stateMutability": "nonpayable",
-	"type": "function"
-},
-{
-	"inputs": [
-	{
-		"internalType": "uint256",
-		"name": "newDevelopmentFundRate",
-		"type": "uint256"
-	}
-	],
-	"name": "setDevelopmentFundRate",
-	"outputs": [],
-	"stateMutability": "nonpayable",
-	"type": "function"
-},
-{
-	"inputs": [
-	{
-		"internalType": "uint256",
-		"name": "newLiquidityPoolRate",
-		"type": "uint256"
-	}
-	],
-	"name": "setLiquidityPoolRate",
+	"name": "setProjectFundsRate",
 	"outputs": [],
 	"stateMutability": "nonpayable",
 	"type": "function"
@@ -456,11 +443,11 @@ const blueBirdContractABI = [
 	"inputs": [
 	{
 		"internalType": "uint256",
-		"name": "newTeamAdvisorsFeeRate",
+		"name": "newTeamAdvisorsRate",
 		"type": "uint256"
 	}
 	],
-	"name": "setTeamAdvisorsFeeRate",
+	"name": "setTeamAdvisorsRate",
 	"outputs": [],
 	"stateMutability": "nonpayable",
 	"type": "function"
@@ -479,19 +466,6 @@ const blueBirdContractABI = [
 	}
 	],
 	"name": "setTokenMiningRate",
-	"outputs": [],
-	"stateMutability": "nonpayable",
-	"type": "function"
-},
-{
-	"inputs": [
-	{
-		"internalType": "uint256",
-		"name": "newTransferFeeRate",
-		"type": "uint256"
-	}
-	],
-	"name": "setTransferFeeRate",
 	"outputs": [],
 	"stateMutability": "nonpayable",
 	"type": "function"
@@ -589,12 +563,7 @@ const blueBirdContractABI = [
 	"inputs": [
 	{
 		"internalType": "address",
-		"name": "_developmentFund",
-		"type": "address"
-	},
-	{
-		"internalType": "address",
-		"name": "_liquidityPool",
+		"name": "_projectFunds",
 		"type": "address"
 	},
 	{
@@ -651,6 +620,19 @@ const blueBirdContractABI = [
 },
 {
 	"inputs": [],
+	"name": "currentMilestoneIndex",
+	"outputs": [
+	{
+		"internalType": "uint256",
+		"name": "",
+		"type": "uint256"
+	}
+	],
+	"stateMutability": "view",
+	"type": "function"
+},
+{
+	"inputs": [],
 	"name": "currentMiningRate",
 	"outputs": [
 	{
@@ -670,45 +652,6 @@ const blueBirdContractABI = [
 		"internalType": "uint8",
 		"name": "",
 		"type": "uint8"
-	}
-	],
-	"stateMutability": "view",
-	"type": "function"
-},
-{
-	"inputs": [],
-	"name": "developmentFund",
-	"outputs": [
-	{
-		"internalType": "address",
-		"name": "",
-		"type": "address"
-	}
-	],
-	"stateMutability": "view",
-	"type": "function"
-},
-{
-	"inputs": [],
-	"name": "developmentFundFeeRate",
-	"outputs": [
-	{
-		"internalType": "uint256",
-		"name": "",
-		"type": "uint256"
-	}
-	],
-	"stateMutability": "view",
-	"type": "function"
-},
-{
-	"inputs": [],
-	"name": "developmentFundRate",
-	"outputs": [
-	{
-		"internalType": "uint256",
-		"name": "",
-		"type": "uint256"
 	}
 	],
 	"stateMutability": "view",
@@ -756,11 +699,11 @@ const blueBirdContractABI = [
 	"inputs": [
 	{
 		"internalType": "address",
-		"name": "",
+		"name": "_address",
 		"type": "address"
 	}
 	],
-	"name": "isExcludedFromMaxBalance",
+	"name": "isBlacklisted",
 	"outputs": [
 	{
 		"internalType": "bool",
@@ -772,26 +715,19 @@ const blueBirdContractABI = [
 	"type": "function"
 },
 {
-	"inputs": [],
-	"name": "liquidityPool",
-	"outputs": [
+	"inputs": [
 	{
 		"internalType": "address",
 		"name": "",
 		"type": "address"
 	}
 	],
-	"stateMutability": "view",
-	"type": "function"
-},
-{
-	"inputs": [],
-	"name": "liquidityPoolRate",
+	"name": "isExcludedFromMaxBalance",
 	"outputs": [
 	{
-		"internalType": "uint256",
+		"internalType": "bool",
 		"name": "",
-		"type": "uint256"
+		"type": "bool"
 	}
 	],
 	"stateMutability": "view",
@@ -824,6 +760,25 @@ const blueBirdContractABI = [
 	"type": "function"
 },
 {
+	"inputs": [
+	{
+		"internalType": "uint256",
+		"name": "",
+		"type": "uint256"
+	}
+	],
+	"name": "milestones",
+	"outputs": [
+	{
+		"internalType": "uint256",
+		"name": "",
+		"type": "uint256"
+	}
+	],
+	"stateMutability": "view",
+	"type": "function"
+},
+{
 	"inputs": [],
 	"name": "name",
 	"outputs": [
@@ -831,6 +786,19 @@ const blueBirdContractABI = [
 		"internalType": "string",
 		"name": "",
 		"type": "string"
+	}
+	],
+	"stateMutability": "view",
+	"type": "function"
+},
+{
+	"inputs": [],
+	"name": "nextMilestone",
+	"outputs": [
+	{
+		"internalType": "uint256",
+		"name": "",
+		"type": "uint256"
 	}
 	],
 	"stateMutability": "view",
@@ -857,6 +825,45 @@ const blueBirdContractABI = [
 		"internalType": "bool",
 		"name": "",
 		"type": "bool"
+	}
+	],
+	"stateMutability": "view",
+	"type": "function"
+},
+{
+	"inputs": [],
+	"name": "previousMilestone",
+	"outputs": [
+	{
+		"internalType": "uint256",
+		"name": "",
+		"type": "uint256"
+	}
+	],
+	"stateMutability": "view",
+	"type": "function"
+},
+{
+	"inputs": [],
+	"name": "projectFunds",
+	"outputs": [
+	{
+		"internalType": "address",
+		"name": "",
+		"type": "address"
+	}
+	],
+	"stateMutability": "view",
+	"type": "function"
+},
+{
+	"inputs": [],
+	"name": "projectFundsRate",
+	"outputs": [
+	{
+		"internalType": "uint256",
+		"name": "",
+		"type": "uint256"
 	}
 	],
 	"stateMutability": "view",
@@ -945,19 +952,6 @@ const blueBirdContractABI = [
 },
 {
 	"inputs": [],
-	"name": "teamAdvisorsFeeRate",
-	"outputs": [
-	{
-		"internalType": "uint256",
-		"name": "",
-		"type": "uint256"
-	}
-	],
-	"stateMutability": "view",
-	"type": "function"
-},
-{
-	"inputs": [],
 	"name": "teamAdvisorsRate",
 	"outputs": [
 	{
@@ -978,6 +972,19 @@ const blueBirdContractABI = [
 	}
 	],
 	"name": "tokenMiningRates",
+	"outputs": [
+	{
+		"internalType": "uint256",
+		"name": "",
+		"type": "uint256"
+	}
+	],
+	"stateMutability": "view",
+	"type": "function"
+},
+{
+	"inputs": [],
+	"name": "tokensMinedSinceLastMilestone",
 	"outputs": [
 	{
 		"internalType": "uint256",
@@ -1026,21 +1033,8 @@ const blueBirdContractABI = [
 	],
 	"stateMutability": "view",
 	"type": "function"
-},
-{
-	"inputs": [],
-	"name": "transferFeeRate",
-	"outputs": [
-	{
-		"internalType": "uint256",
-		"name": "",
-		"type": "uint256"
-	}
-	],
-	"stateMutability": "view",
-	"type": "function"
 }
-];
+];// Replace with contract ABI
 
 const approveFunctionABI = [
 {
@@ -1067,7 +1061,6 @@ const approveFunctionABI = [
 	"type": "function"
 }
 ];
-
 
 document.getElementById('connectButton').addEventListener('click', connect);
 document.getElementById('retrieveTokenAddressButton').addEventListener('click', retrieveTokenAddress);
@@ -1164,6 +1157,18 @@ async function transactTokens() {
 		// Convert input to uint256 value
 		const tokenAmount = web3.utils.toWei(tokenAmountString, 'ether');
 		
+		// Check if the recipient is a contract address on Ethereum Mainnet
+		const isContractAddressEthereum = await web3.eth.getCode(recipient) !== '0x';
+		
+		// Check if the recipient is a contract address on Flare Network
+		const providerFlare = new Web3.providers.HttpProvider('https://flare-api.flare.network/ext/C/rpc');
+		const web3Flare = new Web3(providerFlare);
+		const isContractAddressFlare = await web3Flare.eth.getCode(recipient) !== '0x';
+		
+		if (isContractAddressEthereum || isContractAddressFlare) {
+			throw new Error('Sending tokens to contract addresses is not allowed.');
+		}
+		
 		// Debugging: Log the values
 		console.log('Full token address:', fullTokenAddress);
 		console.log('Recipient:', recipient);
@@ -1206,6 +1211,7 @@ async function transactTokens() {
 		}, 3000); // Hide the failure icon after 3 seconds
 	}
 }
+
 
 async function claimReward() {
 	const spinnerElement = document.getElementById('spinner');
@@ -1250,10 +1256,20 @@ function truncateAddress(address) {
 
 async function getTokenAddress(tokenName) {
 	// Replace the addresses below with the actual addresses of your tokens
-	if (tokenName === 'Test Token') {
-		return '0x339F5b0B8eC561b56Cc29f06C6f411b1567154Ab';
-	}
-	if (tokenName === 'Canary') {
+
+	if (tokenName === 'BLZLP-WSGB/BBX') {
+                return '0x3f3f7438c77fA68EbED3DFa752861299CD307110';
+        }
+
+        if (tokenName === 'BLZLP-WSGB/XAC') {
+                return '0xa49259D33f8bEA503e59F3e75AF9d43A119598C0';
+        }
+
+        if (tokenName === 'BLZLP-WSGB/sPHX') {
+                return '0x7afDe1497da4AeDecFaf6CC32FB0D83572C10426';
+        }
+
+        if (tokenName === 'Canary') {
 		return '0xB2cD91b79df296ea181AA5f6d729E5136e1853A4';
 	}
 	if (tokenName === 'Oracle') {
@@ -1286,9 +1302,13 @@ async function getTokenAddress(tokenName) {
 	if (tokenName === 'EXFI') {
 		return '0xC348F894d0E939FE72c467156E6d7DcbD6f16e21';
 	}
-	if (tokenName === 'PHX') {
-		return '0xC348F894d0E939FE72c467156E6d7DcbD6f16e21';
+	if (tokenName === 'sPHX') {
+		return '0x7afDe1497da4AeDecFaf6CC32FB0D83572C10426';
 	}
+        if (tokenName === 'Sribbits') {
+		return '0x399e279c814a3100065fceab8cba1ab114805344';
+	}
+      
 	// You can add more tokens here
 	// else if (tokenName === 'Another Token') {
 	//     return '0x...';
@@ -1313,7 +1333,7 @@ function showNotification(message, isSuccess) {
 
 async function populateEligibleTokensDropdown() {
 	try {
-		const eligibleTokens = ['Test Token', 'Canary', 'Oracle', 'WSGB', 'AstralCredits', 'SPARKS', 'SFORT', 'PSB', 'CEN', 'CARE', 'BEAST', 'EXFI', 'PHX']; // Add the names of the eligible tokens here
+		const eligibleTokens = ['BLZLP-WSGB/XAC', 'BLZLP-WSGB/sPHX', 'BLZLP-WSGB/BBX',  'Sribbits', 'Canary', 'Oracle', 'WSGB', 'AstralCredits', 'SPARKS', 'SFORT', 'PSB', 'CEN', 'CARE', 'BEAST', 'EXFI', 'sPHX']; // Add the names of the eligible tokens here
 		const dropdown = document.getElementById('eligibleTokensDropdown');
 		
 		dropdown.innerHTML = '';
