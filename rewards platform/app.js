@@ -695,21 +695,37 @@ function sendAddressToServer(address) {
 	});
 }
 
+// Helper function to format balance
+function formatBalance(balance, decimals = 18) {
+    // Convert balance to a BigNumber to handle large integers safely
+    const balanceBN = new Web3.utils.BN(balance);
+    // Convert from Wei (or the smallest unit of the token) to Ether (or the equivalent whole unit)
+    const divisor = new Web3.utils.BN(10).pow(new Web3.utils.BN(decimals));
+    // Get the balance in Ether as a fixed-point number with two decimal places
+    const balanceInEther = balanceBN.div(divisor).toString() + '.' + balanceBN.mod(divisor).toString().padStart(decimals, '0').substring(0, 2);
+    return balanceInEther;
+}
+
 async function fetchUserBalances(userAddress) {
-	for (const [poolName, pid] of Object.entries(poolIds)) {
-		const userInfo = await getUserInfo(pid, userAddress);
-		document.getElementById(`${poolName}_amount`).innerText = userInfo.amount;
-	}
+    for (const [poolName, pid] of Object.entries(poolIds)) {
+        const userInfo = await getUserInfo(pid, userAddress);
+        // Assuming the token uses 18 decimal places
+        const formattedAmount = formatBalance(userInfo.amount, 18);
+        document.getElementById(`${poolName}_amount`).innerText = formattedAmount;
+    }
 }
 
 async function checkEstimatedRewards(userAddress) {
-	const rewards = await checkOwedRewards(userAddress);
-	let totalEstimatedReward = 0;
-	for (const [poolName, amount] of Object.entries(rewards)) {
-		totalEstimatedReward += parseInt(amount);
-	}
-	alert(`Estimated Reward: ${totalEstimatedReward}. Note: This is only an estimate. Actual rewards distribution may vary.`);
+    const rewards = await checkOwedRewards(userAddress);
+    let totalEstimatedReward = new Web3.utils.BN('0'); // Use BigNumber for safe addition
+    for (const [poolName, amount] of Object.entries(rewards)) {
+        totalEstimatedReward = totalEstimatedReward.add(new Web3.utils.BN(amount));
+    }
+    // Format the total estimated reward for display
+    const formattedTotalReward = formatBalance(totalEstimatedReward, 18);
+    alert(`Estimated Reward: ${formattedTotalReward} ETH. Note: This is only an estimate. Actual rewards distribution may vary.`);
 }
+
 
 async function checkOwedRewards(userAddress) {
 	let rewards = {};
