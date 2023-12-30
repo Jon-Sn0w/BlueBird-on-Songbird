@@ -1,5 +1,8 @@
 const web3 = new Web3(window.ethereum);
 
+const customRpcUrl = 'https://sgb-triforce.xyz:9650/ext/C/rpc'; 
+const customWeb3 = new Web3(new Web3.providers.HttpProvider(customRpcUrl));
+
 const masterNestABI = [{"type":"constructor","inputs":[{"type":"address","name":"_feather","internalType":"contract FeatherSwapToken"},{"type":"address","name":"_devAddress","internalType":"address"},{"type":"uint256","name":"_tokenPerBlock","internalType":"uint256"}]},{"type":"function","stateMutability":"view","outputs":[{"type":"uint256","name":"","internalType":"uint256"}],"name":"BONUS_MULTIPLIER","inputs":[]},{"type":"function","stateMutability":"nonpayable","outputs":[],"name":"add","inputs":[{"type":"uint256","name":"_allocPoint","internalType":"uint256"},{"type":"address","name":"_lpToken","internalType":"contract IERC20"},{"type":"uint16","name":"_depositFeeBP","internalType":"uint16"},{"type":"uint16","name":"_withdrawFeeBP","internalType":"uint16"},{"type":"uint256","name":"_lockTime","internalType":"uint256"},{"type":"bool","name":"_withUpdate","internalType":"bool"}]},{"type":"function","stateMutability":"nonpayable","outputs":[],"name":"deposit","inputs":[{"type":"uint256","name":"_pid","internalType":"uint256"},{"type":"uint256","name":"_amount","internalType":"uint256"}]},{"type":"function","stateMutability":"view","outputs":[{"type":"address","name":"","internalType":"address"}],"name":"devAddress","inputs":[]},{"type":"function","stateMutability":"view","outputs":[{"type":"uint256","name":"","internalType":"uint256"}],"name":"devRewardPercent","inputs":[]},{"type":"function","stateMutability":"nonpayable","outputs":[],"name":"emergencyWithdraw","inputs":[{"type":"uint256","name":"_pid","internalType":"uint256"}]},{"type":"function","stateMutability":"view","outputs":[{"type":"address","name":"","internalType":"contract FeatherSwapToken"}],"name":"feather","inputs":[]},{"type":"function","stateMutability":"view","outputs":[{"type":"address","name":"","internalType":"address"}],"name":"featherAddress","inputs":[]},{"type":"function","stateMutability":"view","outputs":[{"type":"uint256","name":"","internalType":"uint256"}],"name":"getMultiplier","inputs":[{"type":"uint256","name":"_from","internalType":"uint256"},{"type":"uint256","name":"_to","internalType":"uint256"}]},{"type":"function","stateMutability":"nonpayable","outputs":[],"name":"massUpdatePools","inputs":[]},{"type":"function","stateMutability":"view","outputs":[{"type":"address","name":"","internalType":"address"}],"name":"owner","inputs":[]},{"type":"function","stateMutability":"view","outputs":[{"type":"uint256","name":"","internalType":"uint256"}],"name":"pendingToken","inputs":[{"type":"uint256","name":"_pid","internalType":"uint256"},{"type":"address","name":"_user","internalType":"address"}]},{"type":"function","stateMutability":"view","outputs":[{"type":"bool","name":"","internalType":"bool"}],"name":"poolExistence","inputs":[{"type":"address","name":"","internalType":"contract IERC20"}]},{"type":"function","stateMutability":"view","outputs":[{"type":"address","name":"lpToken","internalType":"contract IERC20"},{"type":"uint256","name":"allocPoint","internalType":"uint256"},{"type":"uint256","name":"lastRewardBlock","internalType":"uint256"},{"type":"uint256","name":"accTokenPerShare","internalType":"uint256"},{"type":"uint16","name":"depositFeeBP","internalType":"uint16"},{"type":"uint16","name":"withdrawFeeBP","internalType":"uint16"},{"type":"uint256","name":"lockTime","internalType":"uint256"}],"name":"poolInfo","inputs":[{"type":"uint256","name":"","internalType":"uint256"}]},{"type":"function","stateMutability":"view","outputs":[{"type":"uint256","name":"","internalType":"uint256"}],"name":"poolLength","inputs":[]},{"type":"function","stateMutability":"nonpayable","outputs":[],"name":"renounceOwnership","inputs":[]},{"type":"function","stateMutability":"nonpayable","outputs":[],"name":"set","inputs":[{"type":"uint256","name":"_pid","internalType":"uint256"},{"type":"uint256","name":"_allocPoint","internalType":"uint256"},{"type":"uint16","name":"_depositFeeBP","internalType":"uint16"},{"type":"uint16","name":"_withdrawFeeBP","internalType":"uint16"},{"type":"uint256","name":"_lockTime","internalType":"uint256"},{"type":"bool","name":"_withUpdate","internalType":"bool"}]},{"type":"function","stateMutability":"nonpayable","outputs":[],"name":"setDevAddress","inputs":[{"type":"address","name":"_dev","internalType":"address"}]},{"type":"function","stateMutability":"nonpayable","outputs":[],"name":"setDevRewardPercent","inputs":[{"type":"uint256","name":"_rewardPercent","internalType":"uint256"}]},{"type":"function","stateMutability":"nonpayable","outputs":[],"name":"setStartBlock","inputs":[{"type":"uint256","name":"_startBlock","internalType":"uint256"}]},{"type":"function","stateMutability":"view","outputs":[{"type":"uint256","name":"","internalType":"uint256"}],"name":"startBlock","inputs":[]},{"type":"function","stateMutability":"view","outputs":[{"type":"uint256","name":"","internalType":"uint256"}],"name":"tokenPerBlock","inputs":[]},{"type":"function","stateMutability":"view","outputs":[{"type":"uint256","name":"","internalType":"uint256"}],"name":"totalAllocPoint","inputs":[]},{"type":"function","stateMutability":"view","outputs":[{"type":"uint256","name":"","internalType":"uint256"}],"name":"totalStakedAmount","inputs":[]},{"type":"function","stateMutability":"nonpayable","outputs":[],"name":"transferOwnership","inputs":[{"type":"address","name":"newOwner","internalType":"address"}]},{"type":"function","stateMutability":"nonpayable","outputs":[],"name":"updateEmissionRate","inputs":[{"type":"uint256","name":"_tokenPerBlock","internalType":"uint256"}]},{"type":"function","stateMutability":"nonpayable","outputs":[],"name":"updateMultiplier","inputs":[{"type":"uint256","name":"multiplierNumber","internalType":"uint256"}]},{"type":"function","stateMutability":"nonpayable","outputs":[],"name":"updatePool","inputs":[{"type":"uint256","name":"_pid","internalType":"uint256"}]},{"type":"function","stateMutability":"view","outputs":[{"type":"uint256","name":"amount","internalType":"uint256"},{"type":"uint256","name":"rewardDebt","internalType":"uint256"},{"type":"uint256","name":"depositTime","internalType":"uint256"}],"name":"userInfo","inputs":[{"type":"uint256","name":"","internalType":"uint256"},{"type":"address","name":"","internalType":"address"}]},{"type":"function","stateMutability":"nonpayable","outputs":[],"name":"withdraw","inputs":[{"type":"uint256","name":"_pid","internalType":"uint256"},{"type":"uint256","name":"_amount","internalType":"uint256"}]},{"type":"event","name":"Deposit","inputs":[{"type":"address","name":"user","indexed":true},{"type":"uint256","name":"pid","indexed":true},{"type":"uint256","name":"amount","indexed":false}],"anonymous":false},{"type":"event","name":"EmergencyWithdraw","inputs":[{"type":"address","name":"user","indexed":true},{"type":"uint256","name":"pid","indexed":true},{"type":"uint256","name":"amount","indexed":false}],"anonymous":false},{"type":"event","name":"OwnershipTransferred","inputs":[{"type":"address","name":"previousOwner","indexed":true},{"type":"address","name":"newOwner","indexed":true}],"anonymous":false},{"type":"event","name":"SetDevAddress","inputs":[{"type":"address","name":"user","indexed":true},{"type":"address","name":"newAddress","indexed":true}],"anonymous":false},{"type":"event","name":"UpdateEmissionRate","inputs":[{"type":"address","name":"user","indexed":true},{"type":"uint256","name":"goosePerBlock","indexed":false}],"anonymous":false},{"type":"event","name":"Withdraw","inputs":[{"type":"address","name":"user","indexed":true},{"type":"uint256","name":"pid","indexed":true},{"type":"uint256","name":"amount","indexed":false}],"anonymous":false},{"type":"event","name":"setLockTime","inputs":[{"type":"address","name":"user","indexed":true},{"type":"uint256","name":"lockTime","indexed":false}],"anonymous":false}];
 
 
@@ -662,18 +665,23 @@ async function registerUserInRewardsContract(userAddress) {
 		alert("User already registered.");
 		return;
 	}
+	
 	try {
+		alert("Transaction pending... Please wait.");
+		
 		const tx = await rewardsContract.methods.registerUserForAllPools(userAddress).send({ from: userAddress });
+		
 		if (tx.status) {
+			alert('User registered successfully.');
 			console.log('User registered successfully.');
 			registeredUsers.push(userAddress);
-			
-			// Send the address to your server
 			sendAddressToServer(userAddress);
 		} else {
+			alert('Transaction failed.');
 			console.error('Transaction failed.');
 		}
 	} catch (error) {
+		alert('Error registering user in rewards contract: ' + error.message);
 		console.error('Error registering user in rewards contract:', error);
 	}
 }
@@ -697,33 +705,33 @@ function sendAddressToServer(address) {
 
 // Helper function to format balance
 function formatBalance(balance, decimals = 18) {
-    // Convert balance to a BigNumber to handle large integers safely
-    const balanceBN = new Web3.utils.BN(balance);
-    // Convert from Wei (or the smallest unit of the token) to Ether (or the equivalent whole unit)
-    const divisor = new Web3.utils.BN(10).pow(new Web3.utils.BN(decimals));
-    // Get the balance in Ether as a fixed-point number with two decimal places
-    const balanceInEther = balanceBN.div(divisor).toString() + '.' + balanceBN.mod(divisor).toString().padStart(decimals, '0').substring(0, 2);
-    return balanceInEther;
+	// Convert balance to a BigNumber to handle large integers safely
+	const balanceBN = new Web3.utils.BN(balance);
+	// Convert from Wei (or the smallest unit of the token) to Ether (or the equivalent whole unit)
+	const divisor = new Web3.utils.BN(10).pow(new Web3.utils.BN(decimals));
+	// Get the balance in Ether as a fixed-point number with two decimal places
+	const balanceInEther = balanceBN.div(divisor).toString() + '.' + balanceBN.mod(divisor).toString().padStart(decimals, '0').substring(0, 2);
+	return balanceInEther;
 }
 
 async function fetchUserBalances(userAddress) {
-    for (const [poolName, pid] of Object.entries(poolIds)) {
-        const userInfo = await getUserInfo(pid, userAddress);
-        // Assuming the token uses 18 decimal places
-        const formattedAmount = formatBalance(userInfo.amount, 18);
-        document.getElementById(`${poolName}_amount`).innerText = formattedAmount;
-    }
+	for (const [poolName, pid] of Object.entries(poolIds)) {
+		const userInfo = await getUserInfo(pid, userAddress);
+		// Assuming the token uses 18 decimal places
+		const formattedAmount = formatBalance(userInfo.amount, 18);
+		document.getElementById(`${poolName}_amount`).innerText = formattedAmount;
+	}
 }
 
 async function checkEstimatedRewards(userAddress) {
-    const rewards = await checkOwedRewards(userAddress);
-    let totalEstimatedReward = new Web3.utils.BN('0'); // Use BigNumber for safe addition
-    for (const [poolName, amount] of Object.entries(rewards)) {
-        totalEstimatedReward = totalEstimatedReward.add(new Web3.utils.BN(amount));
-    }
-    // Format the total estimated reward for display
-    const formattedTotalReward = formatBalance(totalEstimatedReward, 18);
-    alert(`Estimated Reward: ${formattedTotalReward} ETH. Note: This is only an estimate. Actual rewards distribution may vary.`);
+	const rewards = await checkOwedRewards(userAddress);
+	let totalEstimatedReward = new Web3.utils.BN('0'); // Use BigNumber for safe addition
+	for (const [poolName, amount] of Object.entries(rewards)) {
+		totalEstimatedReward = totalEstimatedReward.add(new Web3.utils.BN(amount));
+	}
+	// Format the total estimated reward for display
+	const formattedTotalReward = formatBalance(totalEstimatedReward, 18);
+	alert(`Estimated Reward: ${formattedTotalReward} ETH. Note: This is only an estimate. Actual rewards distribution may vary.`);
 }
 
 
@@ -757,24 +765,51 @@ async function connectWallet() {
 }
 
 async function withdrawRewards() {
-	const selectedPoolId = document.getElementById("poolDropdown").value;
-	
 	if (!connectedEthereumAddress) {
 		console.error('No connected Ethereum address found. Please connect your wallet first.');
 		return;
 	}
 	
+	const selectedPoolId = document.getElementById("poolDropdown").value;
+	const spinnerElement = document.getElementById('spinner');
+	const successIconElement = document.getElementById('success-icon');
+	const failureIconElement = document.getElementById('failure-icon');
+	const rewardMessageElement = document.getElementById('rewardMessage');
+	
+	spinnerElement.style.display = 'block';
+	rewardMessageElement.innerText = 'Waiting for reward claim...';
+	successIconElement.style.display = 'none';
+	failureIconElement.style.display = 'none';
+	
 	try {
-		// Call the smart contract function with the selected pool ID
 		const tx = await rewardsContract.methods.withdrawOwedRewards(selectedPoolId).send({ from: connectedEthereumAddress });
+		console.log(tx);
+		
 		if (tx.status) {
+			rewardMessageElement.innerText = 'Rewards withdrawn successfully.';
 			console.log('Rewards withdrawn successfully.');
+			successIconElement.style.display = 'block';
 		} else {
+			rewardMessageElement.innerText = 'Transaction failed.';
 			console.error('Transaction failed.');
+			failureIconElement.style.display = 'block';
 		}
 	} catch (error) {
+		rewardMessageElement.innerText = 'Error withdrawing rewards: ' + error.message;
 		console.error('Error withdrawing rewards:', error);
+		failureIconElement.style.display = 'block';
+	} finally {
+		spinnerElement.style.display = 'none';
+		setTimeout(() => {
+			rewardMessageElement.innerText = '';
+			successIconElement.style.display = 'none';
+			failureIconElement.style.display = 'none';
+		}, 3000);
 	}
+}
+
+function truncateAddress(address) {
+	return `${address.slice(0, 6)}...${address.slice(-4)}`;
 }
 
 document.getElementById('withdrawRewardsButton').addEventListener('click', async () => {
@@ -811,10 +846,10 @@ document.getElementById('updateBalancesButton').addEventListener('click', async 
 	}
 });
 
-document.getElementById('checkRewardsButton').addEventListener('click', async () => {
-	if (connectedEthereumAddress) {
-		await checkEstimatedRewards(connectedEthereumAddress);
-	} else {
-		console.error('User address not found. Please connect your wallet first.');
-	}
-});
+//document.getElementById('checkRewardsButton').addEventListener('click', async () => {
+	//if (connectedEthereumAddress) {
+		//await checkEstimatedRewards(connectedEthereumAddress);
+	//} else {
+		//console.error('User address not found. Please connect your wallet first.');
+	//}
+//});
