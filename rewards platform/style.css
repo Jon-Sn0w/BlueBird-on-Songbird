@@ -62,7 +62,7 @@ header {
 }
 
 button, .btn {
-	padding: 10px 20px;
+	padding: 10px 30px;
 	border: none;
 	border-radius: 20px;
 	background-color: #128FAE;
@@ -139,10 +139,115 @@ label {
 	gap: 15px;
 }
 
-.container-1 div:nth-child(1) {
+.container-1 div:nth-child(1), .container-1 p {
 	margin-bottom: 20px;
 }
 
-.container-1 p {
+.flex-container {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	min-height: 50%; /* Adjust this value as per your original div height */
+}
+
+/* Existing CSS */
+
+/* Media queries for mobile devices */
+@media screen and (max-width: 768px) {
+	/* Other responsive styles */
+	
+	button, .btn {
+		padding: 1.5vw 4vw; /* Slightly reduce dynamic padding */
+		font-size: 3vw; /* Reduce font size for smaller screens */
+		margin-bottom: 1vw; /* Maintain bottom margin for spacing */
+		max-width: 70%; /* Reduce maximum width */
+		min-width: 120px; /* Slightly reduce minimum width */
+		border-radius: 15px; /* Adjust border-radius for smaller buttons */
+	}
+}
+
+/* Add margin to the bottom of the dropdown */
+#poolDropdown {
+margin-bottom: 20px; /* Adjust the value as needed */
+}
+
+/* Notification styles */
+.notification {
+	position: fixed; /* Changed from relative to fixed */
+	top: 50%; /* Center vertically */
+	left: 50%; /* Center horizontally */
+	transform: translate(-50%, -50%); /* Adjust to be exactly in the center */
+	padding: 20px;
+	background-color: rgba(255, 255, 255, 0.10);
+	border: 1px solid #ccc;
+	border-radius: 10px;
+	box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+	visibility: hidden;
+	opacity: 0;
+	transition: opacity 0.5s linear;
+	z-index: 1000; /* Ensure it's above other elements */
+}
+
+.notification.show {
+	visibility: visible;
+	opacity: 1;
+}
+
+.notification .message {
 	margin-bottom: 20px;
+}
+
+.notification-success {
+	background-color: #90EE90; /* Light Green */
+}
+
+.notification-failure {
+	background-color: #FF7F7F; /* Light Red */
+}
+
+/* Spinner styles */
+@keyframes spin {
+	0% { transform: rotate(0deg); }
+	100% { transform: rotate(360deg); }
+}
+
+.spinner {
+	position: fixed;
+	bottom: 75%; /* 70% up from the bottom */
+	right: 47.5%; /* Centered horizontally */
+	transform: translate(-50%, 50%); /* Adjust for exact centering */
+	border: 8px solid #f3f3f3;
+	border-top: 8px solid #007BFF;
+	border-radius: 50%;
+	width: 50px;
+	height: 50px;
+	animation: spin 1s linear infinite;
+	display: none;
+	opacity: 0.618;
+}
+
+/* Status icon styles */
+.status-icon {
+	width: 24px;
+	height: 24px;
+	margin-left: 5px;
+	display: none; /* This ensures the icons are hidden by default */
+}
+
+/* Transaction status styles */
+.transaction-status {
+	margin-top: 10px;
+	font-weight: bold;
+}
+
+/* Success icon styles */
+.success-icon {
+	fill: #28a745;
+}
+
+/* Failure icon styles */
+.failure-icon {
+	fill: #dc3545;
+}
+}
 }
