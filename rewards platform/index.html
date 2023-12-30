@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <html lang="en">
 
 <head>
@@ -10,15 +12,28 @@
 </head>
 
 <body>
+<button class="navigation-btn" onclick="location.href='../index.html'">Go Back</button>
 <div class="container container-1">
-<div style="text-align: center;">
+<div class="flex-container">
 <button id="connectWallet">Connect Wallet</button> 
 <button id="registerUserButton">Register for All Pools</button>
-</div>
+</div> 
 <p>Connected Address: <span id="address"></span></p>
-<div style="text-align: center;">
+<div class="flex-container">
 <button id="updateBalancesButton">Update Balances</button> 
-<button id="checkRewardsButton">Check Rewards Balance</button>
+<div class="action">
+<div id="spinner" class="spinner"></div>
+<img id="success-icon" src="images/success_icon.png" class="status-icon" alt="Success" style="display: none;">
+<img id="failure-icon" src="images/failure_icon.png" class="status-icon" alt="Failure" style="display: none;">
+</div>
+<div class="message"></div>
+<div id="notification" class="notification">
+<div id="accountMessage" class="message"></div>
+<div id="approveMessage" class="message"></div>
+<div id="transactMessage" class="message"></div>
+<div id="rewardMessage" class="message"></div>
+<!--<button id="checkRewardsButton">Check Rewards Balance</button>-->
+</div>
 </div>
 </div>
 
@@ -36,6 +51,7 @@
 <option value="9">bbx_sphx</option>
 <option value="15">bbx_xac</option>
 </select>
+
 <div style="text-align: center;">
 <button id="withdrawRewardsButton">Withdraw Rewards</button>
 </div>
